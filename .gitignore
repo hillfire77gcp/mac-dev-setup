@@ -38,3 +38,8 @@ ENV/
 # User-specific git config (if it contains personal info)
 # Uncomment if you add sensitive data
 # dotfiles/dot_gitconfig
+
+# Continue extension runtime data (user-specific workspaces)
+dotfiles/continue/index/
+dotfiles/continue/sessions/
+dotfiles/continue/dev_data/

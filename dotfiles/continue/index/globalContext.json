@@ -1,12 +1,6 @@
 {
-  "lastSelectedProfileForWorkspace": {
-    "file:///Users/admin/dev/python/dbt-local:::personal": "local",
-    "file:///Users/admin/dev/test-python:::personal": "local"
-  },
-  "lastSelectedOrgIdForWorkspace": {
-    "file:///Users/admin/dev/python/dbt-local": "personal",
-    "file:///Users/admin/dev/test-python": "personal"
-  },
+  "lastSelectedProfileForWorkspace": {},
+  "lastSelectedOrgIdForWorkspace": {},
   "selectedModelsByProfileId": {
     "local": {
       "chat": null,

@@ -1,5 +1,14 @@
 # ~/.zshrc - Modern Python Development Environment
-# Last Updated: October 25, 2025
+# Last Updated: October 26, 2025
+
+#############################################
+# Completion System - MUST BE FIRST
+#############################################
+# Initialize completion system before anything else
+# This ensures compdef is available when tools try to register completions
+
+autoload -Uz compinit
+compinit
 
 #############################################
 # Path Configuration
@@ -100,7 +109,9 @@ alias lt='eza --tree --icons --git-ignore'
 alias l='eza -ltr --icons'
 alias cat='bat --style=auto'
 alias grep='rg'
-alias find='fd'
+# Don't alias 'find' to 'fd' - breaks scripts expecting find syntax
+# Use 'fd' directly when you want the modern tool
+#alias find='fd'
 
 # Safety
 alias rm='rm -i'
@@ -162,12 +173,8 @@ alias dcl='docker compose logs -f'
 # Project navigation
 alias dev='cd ~/dev'
 alias proj='cd ~/dev/projects'
-alias stocks='pushd /Users/admin/dev/stocks'
 
-# Spark/Delta
-alias delta='pushd /Users/admin/dev/delta-docker; docker run -v /Users/admin/dev/stocks:/stocks --name delta_quickstart --rm -it --entrypoint bash delta_quickstart'
-alias bee='spark-beeline -u jdbc:hive2://localhost:10000'
-alias dbtf=/Users/admin/.local/bin/dbt
+# Add your project-specific aliases in ~/.zshrc.local
 
 #############################################
 # Functions
@@ -313,6 +320,3 @@ fi
 
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 [ -f ~/.zshrc.work ] && source ~/.zshrc.work
-
-# Auto-navigate to stocks
-stocks
