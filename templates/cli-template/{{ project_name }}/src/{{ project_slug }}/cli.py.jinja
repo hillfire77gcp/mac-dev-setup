@@ -1,0 +1,71 @@
+"""{{ project_description }}"""
+
+{% if use_typer -%}
+import typer
+{% if use_rich -%}
+from rich.console import Console
+from rich.table import Table
+{% endif %}
+
+app = typer.Typer(
+    name="{{ project_slug }}",
+    help="{{ project_description }}",
+    add_completion=True,
+)
+{% if use_rich -%}
+console = Console()
+{% endif %}
+
+
+@app.command()
+def hello(
+    name: str = typer.Option("World", "--name", "-n", help="Name to greet"),
+) -> None:
+    """Say hello to someone."""
+    {% if use_rich -%}
+    console.print(f"[bold green]Hello, {name}![/bold green]")
+    {% else -%}
+    print(f"Hello, {name}!")
+    {% endif %}
+
+
+@app.command()
+def version() -> None:
+    """Show version information."""
+    {% if use_rich -%}
+    console.print("[bold blue]{{ project_slug }}[/bold blue] version 0.1.0")
+    {% else -%}
+    print("{{ project_slug }} version 0.1.0")
+    {% endif %}
+
+
+if __name__ == "__main__":
+    app()
+{% else -%}
+import argparse
+
+
+def main() -> None:
+    """Main entry point."""
+    parser = argparse.ArgumentParser(description="{{ project_description }}")
+    parser.add_argument("--name", "-n", default="World", help="Name to greet")
+    parser.add_argument("--version", action="store_true", help="Show version")
+
+    args = parser.parse_args()
+
+    if args.version:
+        print("{{ project_slug }} version 0.1.0")
+        return
+
+    {% if use_rich -%}
+    from rich.console import Console
+    console = Console()
+    console.print(f"[bold green]Hello, {args.name}![/bold green]")
+    {% else -%}
+    print(f"Hello, {args.name}!")
+    {% endif %}
+
+
+if __name__ == "__main__":
+    main()
+{% endif %}

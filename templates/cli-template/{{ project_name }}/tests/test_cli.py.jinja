@@ -1,0 +1,40 @@
+"""Tests for CLI module."""
+
+import pytest
+{% if use_typer -%}
+from typer.testing import CliRunner
+
+from {{ project_slug }}.cli import app
+
+runner = CliRunner()
+
+
+def test_hello_default() -> None:
+    """Test hello command with default name."""
+    result = runner.invoke(app, ["hello"])
+    assert result.exit_code == 0
+    assert "Hello, World!" in result.stdout
+
+
+def test_hello_custom_name() -> None:
+    """Test hello command with custom name."""
+    result = runner.invoke(app, ["hello", "--name", "Alice"])
+    assert result.exit_code == 0
+    assert "Hello, Alice!" in result.stdout
+
+
+def test_version() -> None:
+    """Test version command."""
+    result = runner.invoke(app, ["version"])
+    assert result.exit_code == 0
+    assert "0.1.0" in result.stdout
+{% else -%}
+from {{ project_slug }}.cli import main
+
+
+def test_main(capsys) -> None:
+    """Test main function."""
+    main()
+    captured = capsys.readouterr()
+    assert "Hello" in captured.out
+{% endif %}

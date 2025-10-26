@@ -1,0 +1,40 @@
+# Backup directories (contain user-specific backups)
+backups/
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.swp
+*.swo
+*~
+.*.swp
+
+# IDE files
+.vscode/
+.idea/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Logs
+*.log
+
+# User-specific git config (if it contains personal info)
+# Uncomment if you add sensitive data
+# dotfiles/dot_gitconfig

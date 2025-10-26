@@ -1,0 +1,21 @@
+{
+  "lastSelectedProfileForWorkspace": {
+    "file:///Users/admin/dev/python/dbt-local:::personal": "local",
+    "file:///Users/admin/dev/test-python:::personal": "local"
+  },
+  "lastSelectedOrgIdForWorkspace": {
+    "file:///Users/admin/dev/python/dbt-local": "personal",
+    "file:///Users/admin/dev/test-python": "personal"
+  },
+  "selectedModelsByProfileId": {
+    "local": {
+      "chat": null,
+      "edit": null,
+      "apply": null,
+      "embed": "Transformers.js (Built-In)",
+      "autocomplete": null,
+      "rerank": null,
+      "summarize": null
+    }
+  }
+}

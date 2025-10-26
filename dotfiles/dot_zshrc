@@ -1,0 +1,318 @@
+# ~/.zshrc - Modern Python Development Environment
+# Last Updated: October 25, 2025
+
+#############################################
+# Path Configuration
+#############################################
+
+# Homebrew
+export PATH="/opt/homebrew/bin:$PATH"
+
+# Local bin
+export PATH="$HOME/.local/bin:$PATH"
+
+# VS Code
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+
+# Java/Scala paths
+export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
+export CPPFLAGS="-I/opt/homebrew/opt/openjdk@11/include"
+export PATH="/opt/homebrew/opt/scala@2.13/bin:$PATH"
+
+# Spark
+export SPARK_HOME="$(brew --prefix apache-spark)/libexec"
+export PATH="$SPARK_HOME/bin:$PATH"
+export HADOOP_CONF_DIR=$SPARK_HOME/conf
+export DERBY_HOME=/opt/homebrew/opt/apache-spark/libexec/db-derby-10.14.2.0-lib
+
+#############################################
+# Tool Initialization
+#############################################
+
+# mise - Python version management
+if command -v mise &> /dev/null; then
+    eval "$(mise activate zsh)"
+fi
+
+# Starship prompt
+if command -v starship &> /dev/null; then
+    eval "$(starship init zsh)"
+else
+    export PS1="%~ %# "
+fi
+
+# zoxide - Smarter cd
+if command -v zoxide &> /dev/null; then
+    eval "$(zoxide init zsh)"
+fi
+
+# fzf - Fuzzy finder
+if [ -f ~/.fzf.zsh ]; then
+    source ~/.fzf.zsh
+fi
+
+# GitHub CLI completion
+if command -v gh &> /dev/null; then
+    eval "$(gh completion -s zsh)"
+fi
+
+#############################################
+# Environment Variables
+#############################################
+
+# Python
+export PYTHONDONTWRITEBYTECODE=1
+export PYTHONUNBUFFERED=1
+
+# Editor
+export EDITOR="code --wait"
+export VISUAL="code --wait"
+
+# Less/Pager
+export LESS="-R -F -X"
+if command -v bat &> /dev/null; then
+    export LESSOPEN="| bat --style=numbers --color=always %s"
+fi
+
+# fzf
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+
+# History
+export HISTSIZE=10000
+export SAVEHIST=10000
+export HISTFILE=~/.zsh_history
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_SPACE
+
+#############################################
+# Aliases - Modern CLI Tools
+#############################################
+
+# Modern tool replacements
+alias ls='eza --icons'
+alias ll='eza -l --icons --git'
+alias la='eza -la --icons --git'
+alias lt='eza --tree --icons --git-ignore'
+alias l='eza -ltr --icons'
+alias cat='bat --style=auto'
+alias grep='rg'
+alias find='fd'
+
+# Safety
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# Python
+alias py='python'
+alias py3='python3'
+alias ipy='ipython'
+alias pip='uv pip'
+alias venv='python -m venv venv'
+alias activate='source venv/bin/activate'
+
+# Testing
+alias pytest='pytest -v'
+
+# Git
+alias g='git'
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git pull'
+alias gd='git diff'
+alias gco='git checkout'
+alias gb='git branch'
+alias glog='git log --oneline --graph --decorate'
+
+# GitHub CLI
+alias ghpr='gh pr create'
+alias ghprs='gh pr status'
+alias ghv='gh repo view --web'
+
+# Quick edits
+alias zshrc='code ~/.zshrc'
+alias hosts='sudo code /etc/hosts'
+
+# Network
+alias ports='lsof -i -P -n | grep LISTEN'
+alias listopenports='sudo lsof -i -P | grep LISTEN'
+alias myip='curl ifconfig.me'
+
+# Development
+alias serve='python -m http.server'
+alias pretty='python -m json.tool'
+
+# Docker
+alias dc='docker compose'
+alias dcu='docker compose up'
+alias dcd='docker compose down'
+alias dcl='docker compose logs -f'
+
+# Project navigation
+alias dev='cd ~/dev'
+alias proj='cd ~/dev/projects'
+alias stocks='pushd /Users/admin/dev/stocks'
+
+# Spark/Delta
+alias delta='pushd /Users/admin/dev/delta-docker; docker run -v /Users/admin/dev/stocks:/stocks --name delta_quickstart --rm -it --entrypoint bash delta_quickstart'
+alias bee='spark-beeline -u jdbc:hive2://localhost:10000'
+alias dbtf=/Users/admin/.local/bin/dbt
+
+#############################################
+# Functions
+#############################################
+
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+new-py() {
+    if [ -z "$1" ]; then
+        echo "Usage: new-py <project-name>"
+        return 1
+    fi
+    local project_name="$1"
+    mkdir -p "$project_name" && cd "$project_name"
+    mise use python@3.12
+    uv init
+    mkdir -p src tests docs
+    touch README.md .gitignore
+    git init && git add . && git commit -m "Initial commit"
+    echo "✅ Created Python project: $project_name"
+}
+
+activate-project() {
+    if [ -f ".python-version" ]; then
+        mise install
+        echo "✅ Python version activated"
+    elif [ -f "pyproject.toml" ] && [ -d "venv" ]; then
+        source venv/bin/activate
+        echo "✅ Virtual environment activated"
+    else
+        echo "❌ Not a Python project or no venv found"
+    fi
+}
+
+qcommit() {
+    if [ -z "$1" ]; then
+        echo "Usage: qcommit <message>"
+        return 1
+    fi
+    git add -A && git commit -m "$1"
+}
+
+killport() {
+    if [ -z "$1" ]; then
+        echo "Usage: killport <port>"
+        return 1
+    fi
+    lsof -ti:$1 | xargs kill -9
+    echo "✅ Killed process on port $1"
+}
+
+backup() {
+    cp "$1" "$1.backup-$(date +%Y%m%d-%H%M%S)"
+}
+
+extract() {
+    if [ -z "$1" ]; then
+        echo "Usage: extract <file>"
+        return 1
+    fi
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.bz2)   tar xjf "$1"     ;;
+            *.tar.gz)    tar xzf "$1"     ;;
+            *.bz2)       bunzip2 "$1"     ;;
+            *.rar)       unrar x "$1"     ;;
+            *.gz)        gunzip "$1"      ;;
+            *.tar)       tar xf "$1"      ;;
+            *.tbz2)      tar xjf "$1"     ;;
+            *.tgz)       tar xzf "$1"     ;;
+            *.zip)       unzip "$1"       ;;
+            *.Z)         uncompress "$1"  ;;
+            *.7z)        7z x "$1"        ;;
+            *)           echo "'$1' cannot be extracted" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+duf() {
+    du -sh * | sort -h
+}
+
+fzfp() {
+    fzf --preview 'bat --style=numbers --color=always --line-range :500 {}'
+}
+
+ai() {
+    if [ -z "$1" ]; then
+        aider
+    else
+        aider "$@"
+    fi
+}
+
+#############################################
+# Completion
+#############################################
+
+autoload -Uz compinit
+compinit
+
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+#############################################
+# Third-Party Tools
+#############################################
+
+# SDKMAN
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# Conda
+__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
+        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+
+#############################################
+# Welcome Message
+#############################################
+
+if [ -t 0 ] && command -v python &> /dev/null; then
+    echo ""
+    echo "🐍 Python: $(python --version 2>&1 | cut -d' ' -f2) | 📍 $(pwd | sed "s|$HOME|~|")"
+    echo ""
+fi
+
+#############################################
+# Machine-Specific
+#############################################
+
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+[ -f ~/.zshrc.work ] && source ~/.zshrc.work
+
+# Auto-navigate to stocks
+stocks

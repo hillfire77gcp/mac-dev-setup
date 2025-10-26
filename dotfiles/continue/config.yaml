@@ -1,0 +1,25 @@
+name: Local Config
+version: 1.0.0
+schema: v1
+models:
+  - title: DeepSeek Coder (Free Local)
+    provider: ollama
+    model: deepseek-coder:6.7b
+tabAutocompleteModel:
+  title: Copilot
+  provider: copilot
+contextProviders:
+  - name: code
+  - name: docs
+  - name: diff
+  - name: terminal
+  - name: problems
+slashCommands:
+  - name: edit
+    description: Edit highlighted code
+  - name: comment
+    description: Add comments to code
+  - name: cmd
+    description: Generate shell command
+  - name: commit
+    description: Generate commit message

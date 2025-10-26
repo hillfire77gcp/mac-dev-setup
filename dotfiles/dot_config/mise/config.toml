@@ -1,0 +1,22 @@
+# ~/.config/mise/config.toml
+# mise Configuration
+
+[settings]
+experimental = true
+verbose = false
+quiet = false
+color = true
+yes = false
+
+[tools]
+# Set default Python version
+python = "3.12"
+
+[aliases]
+# Create convenient aliases
+python = ["3.12", "3.11", "3.13"]
+
+[env]
+# Global environment variables
+PYTHONDONTWRITEBYTECODE = "1"
+UV_PYTHON_DOWNLOADS = "automatic"

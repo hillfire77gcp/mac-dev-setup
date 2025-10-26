@@ -1,0 +1,56 @@
+# Justfile for {{ project_slug }}
+
+# Default recipe (runs when you type 'just')
+default:
+    @just --list
+
+# Install dependencies
+install:
+    uv sync --all-extras
+
+# Run tests
+test:
+    uv run pytest
+
+# Run tests with coverage
+test-cov:
+    uv run pytest --cov-report=html
+    open htmlcov/index.html
+
+# Run linter
+lint:
+    uv run ruff check .
+
+# Format code
+format:
+    uv run ruff format .
+
+# Type check
+typecheck:
+    uv run mypy src
+
+# Run all checks
+check: lint typecheck test
+
+# Clean build artifacts
+clean:
+    rm -rf build dist *.egg-info
+    rm -rf .pytest_cache .ruff_cache .mypy_cache
+    rm -rf htmlcov .coverage
+    find . -type d -name __pycache__ -exec rm -rf {} +
+
+# Build package
+build: clean
+    uv build
+
+# Run the CLI
+run *ARGS:
+    uv run {{ project_slug }} {{ARGS}}
+
+# Install pre-commit hooks
+hooks:
+    pre-commit install
+
+# Run pre-commit on all files
+pre-commit:
+    pre-commit run --all-files
