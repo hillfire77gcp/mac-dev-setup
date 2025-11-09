@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-
 # Install Nerd Fonts for Terminal
+
+# Source common functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/common.sh"
 
 log_header "🔤 Installing Nerd Fonts"
 
-if ! command_exists brew; then
-    log_error "Homebrew is required but not installed. Please install Homebrew first."
-    exit 1
-fi
+check_homebrew
 
 # Tap the cask-fonts repository
 log_info "Adding Homebrew font cask..."
@@ -22,7 +22,7 @@ else
     log_success "MesloLGS Nerd Font installed"
 fi
 
-log_info "Font installation complete"
+log_success "Font installation complete"
 echo ""
 echo -e "${YELLOW}⚠ To use the font:${NC}"
 echo "  1. Restart your terminal"

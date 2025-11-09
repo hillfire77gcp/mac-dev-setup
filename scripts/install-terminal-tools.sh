@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-
 # Install Modern Terminal Tools
+
+# Source common functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/common.sh"
 
 log_header "✨ Installing Modern Terminal Tools"
 
-if ! command_exists brew; then
-    log_error "Homebrew is required but not installed. Please install Homebrew first."
-    exit 1
-fi
+check_homebrew
 
 # Define modern CLI tools
 declare -A tools=(
@@ -24,16 +24,7 @@ declare -A tools=(
 )
 
 log_info "Installing modern terminal tools..."
-
-for tool in "${!tools[@]}"; do
-    if command_exists "$tool"; then
-        log_success "$tool already installed - ${tools[$tool]}"
-    else
-        log_info "Installing $tool - ${tools[$tool]}"
-        brew install "$tool"
-        log_success "$tool installed"
-    fi
-done
+install_brew_tools tools
 
 # Install fzf key bindings and fuzzy completion
 if command_exists fzf; then

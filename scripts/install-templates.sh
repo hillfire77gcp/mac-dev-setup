@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-
 # Install Python Project Templates
+
+# Source common functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/common.sh"
 
 log_header "📋 Installing Python Project Templates"
 
@@ -14,8 +17,8 @@ fi
 
 log_info "Installing Python CLI template to: $TEMPLATES_DST"
 
-# Create dev directory
-mkdir -p "$HOME/dev"
+# Create dev directory with validation
+create_directory "$HOME/dev"
 
 # Backup existing templates
 backup_file "$TEMPLATES_DST"

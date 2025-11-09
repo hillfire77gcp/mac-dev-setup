@@ -211,6 +211,44 @@ component_menu() {
             esac
         done
     fi
+
+    # Auto-resolve dependencies
+    resolve_dependencies
+}
+
+# Resolve component dependencies
+resolve_dependencies() {
+    local changes_made=0
+
+    # CLI Tools, Terminal, Fonts, VS Code, and AI Tools all need Homebrew
+    if [ $INSTALL_CLI_TOOLS -eq 1 ] || [ $INSTALL_TERMINAL -eq 1 ] || \
+       [ $INSTALL_FONTS -eq 1 ] || [ $INSTALL_VSCODE -eq 1 ] || [ $INSTALL_AI -eq 1 ]; then
+        if [ $INSTALL_HOMEBREW -eq 0 ]; then
+            log_warning "Auto-selecting Homebrew (required by selected components)"
+            INSTALL_HOMEBREW=1
+            changes_made=1
+        fi
+    fi
+
+    # Python needs CLI Tools (for mise)
+    if [ $INSTALL_PYTHON -eq 1 ]; then
+        if [ $INSTALL_CLI_TOOLS -eq 0 ]; then
+            log_warning "Auto-selecting CLI Tools (required for Python installation via mise)"
+            INSTALL_CLI_TOOLS=1
+            changes_made=1
+        fi
+        if [ $INSTALL_HOMEBREW -eq 0 ]; then
+            log_warning "Auto-selecting Homebrew (required by CLI Tools)"
+            INSTALL_HOMEBREW=1
+            changes_made=1
+        fi
+    fi
+
+    if [ $changes_made -eq 1 ]; then
+        echo ""
+        log_info "Dependencies automatically resolved"
+        echo ""
+    fi
 }
 
 # Run installation

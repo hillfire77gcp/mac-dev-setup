@@ -100,7 +100,7 @@ restore_file() {
         starship.toml) dst="$HOME/.config/starship.toml" ;;
         config.toml) dst="$HOME/.config/mise/config.toml" ;;
         settings.json) dst="$HOME/Library/Application Support/Code/User/settings.json" ;;
-        config.json) dst="$HOME/.continue/config.json" ;;
+        config.json|config.yaml) dst="$HOME/.continue/$filename" ;;
         *)
             log_warning "Unknown file type: $filename"
             read -p "Enter destination path: " dst

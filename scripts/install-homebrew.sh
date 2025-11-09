@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-
 # Install Homebrew Package Manager
+
+# Source common functions (but check_homebrew won't be called here)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/common.sh"
 
 log_header "🍺 Installing Homebrew"
 

@@ -1,69 +1,41 @@
 #!/usr/bin/env bash
-
 # Apply Dotfiles Configuration
+
+# Source common functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/common.sh"
 
 log_header "⚙️  Applying Dotfiles"
 
 DOTFILES_DIR="$SCRIPT_DIR/dotfiles"
 
-# Function to apply a dotfile
-apply_dotfile() {
-    local src=$1
-    local dst=$2
+# Apply dotfiles - simplified using safe_copy
+declare -A dotfiles=(
+    ["dot_zshrc"]="$HOME/.zshrc"
+    ["dot_gitconfig"]="$HOME/.gitconfig"
+    ["empty_dot_gitignore_global"]="$HOME/.gitignore_global"
+    ["dot_config/empty_starship.toml"]="$HOME/.config/starship.toml"
+    ["dot_config/mise/config.toml"]="$HOME/.config/mise/config.toml"
+)
 
-    # Backup existing file
-    backup_file "$dst"
+log_info "Applying dotfiles..."
 
-    # Create directory if needed
-    mkdir -p "$(dirname "$dst")"
+for src_name in "${!dotfiles[@]}"; do
+    src="$DOTFILES_DIR/$src_name"
+    dst="${dotfiles[$src_name]}"
 
-    # Copy file
-    cp "$src" "$dst"
-    log_success "Applied: $(basename "$dst")"
-}
+    if [ -f "$src" ]; then
+        safe_copy "$src" "$dst"
+        log_success "Applied: $(basename "$dst")"
+    else
+        log_warning "File not found: $src_name"
+    fi
+done
 
-# Apply .zshrc
-if [ -f "$DOTFILES_DIR/dot_zshrc" ]; then
-    log_info "Applying .zshrc..."
-    apply_dotfile "$DOTFILES_DIR/dot_zshrc" "$HOME/.zshrc"
-else
-    log_warning ".zshrc not found in dotfiles"
-fi
-
-# Apply .gitconfig
-if [ -f "$DOTFILES_DIR/dot_gitconfig" ]; then
-    log_info "Applying .gitconfig..."
-    apply_dotfile "$DOTFILES_DIR/dot_gitconfig" "$HOME/.gitconfig"
-else
-    log_warning ".gitconfig not found in dotfiles"
-fi
-
-# Apply .gitignore_global
-if [ -f "$DOTFILES_DIR/empty_dot_gitignore_global" ]; then
-    log_info "Applying .gitignore_global..."
-    apply_dotfile "$DOTFILES_DIR/empty_dot_gitignore_global" "$HOME/.gitignore_global"
-
-    # Configure git to use it
+# Configure git to use global gitignore
+if [ -f "$HOME/.gitignore_global" ]; then
     git config --global core.excludesfile "$HOME/.gitignore_global"
     log_success "Configured git to use global gitignore"
-else
-    log_warning ".gitignore_global not found in dotfiles"
-fi
-
-# Apply Starship config
-if [ -f "$DOTFILES_DIR/dot_config/empty_starship.toml" ]; then
-    log_info "Applying Starship prompt config..."
-    apply_dotfile "$DOTFILES_DIR/dot_config/empty_starship.toml" "$HOME/.config/starship.toml"
-else
-    log_warning "Starship config not found in dotfiles"
-fi
-
-# Apply mise config
-if [ -f "$DOTFILES_DIR/dot_config/mise/config.toml" ]; then
-    log_info "Applying mise config..."
-    apply_dotfile "$DOTFILES_DIR/dot_config/mise/config.toml" "$HOME/.config/mise/config.toml"
-else
-    log_warning "mise config not found in dotfiles"
 fi
 
 log_success "Dotfiles applied successfully"

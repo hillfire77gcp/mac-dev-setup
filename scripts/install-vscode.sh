@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-
 # Install VS Code and Extensions
+
+# Source common functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/common.sh"
 
 log_header "💻 Setting up VS Code"
 
-if ! command_exists brew; then
-    log_error "Homebrew is required but not installed. Please install Homebrew first."
-    exit 1
-fi
+check_homebrew
 
 # Install VS Code
 if command_exists code; then
@@ -28,7 +28,10 @@ if [ -f "$EXTENSIONS_FILE" ]; then
     log_info "Installing VS Code extensions..."
 
     while IFS= read -r extension; do
-        if code --list-extensions | grep -q "^$extension$"; then
+        # Skip empty lines and comments
+        [[ -z "$extension" || "$extension" =~ ^# ]] && continue
+
+        if code --list-extensions | grep -qi "^$extension$"; then
             log_success "$extension already installed"
         else
             log_info "Installing extension: $extension"
@@ -47,14 +50,7 @@ SETTINGS_DST="$HOME/Library/Application Support/Code/User/settings.json"
 
 if [ -f "$SETTINGS_SRC" ]; then
     log_info "Applying VS Code settings..."
-
-    # Backup existing settings
-    backup_file "$SETTINGS_DST"
-
-    # Copy new settings
-    mkdir -p "$(dirname "$SETTINGS_DST")"
-    cp "$SETTINGS_SRC" "$SETTINGS_DST"
-
+    safe_copy "$SETTINGS_SRC" "$SETTINGS_DST"
     log_success "VS Code settings applied"
 else
     log_warning "Settings file not found: $SETTINGS_SRC"
