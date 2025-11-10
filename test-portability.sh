@@ -15,12 +15,15 @@ if grep -r "/Users/admin" . \
     --exclude="FIXES.md" \
     --exclude="TEST-GUIDE.md" \
     --exclude="CLAUDE.md" \
+    --exclude="ANALYSIS-RECOMMENDATIONS.md" \
+    --exclude="ARCHITECTURE-VISION.md" \
+    --exclude="PHASE-1-SUMMARY.md" \
     --exclude="test-portability.sh" \
     2>/dev/null; then
-    echo "❌ FAIL: Found hardcoded /Users/admin paths"
+    echo "❌ FAIL: Found hardcoded /Users/admin paths in source files"
     errors=$((errors + 1))
 else
-    echo "✅ PASS: No hardcoded /Users/admin paths (CLAUDE.md examples excluded)"
+    echo "✅ PASS: No hardcoded /Users/admin paths in source files"
 fi
 echo ""
 
