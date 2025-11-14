@@ -298,14 +298,18 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 #############################################
-# Third-Party Tools
+# Third-Party Tools (Optional)
 #############################################
 
-# SDKMAN
+# SDKMAN - Java/Scala/Kotlin version manager
+# NOTE: Not installed by setup.sh - install manually from https://sdkman.io
+# This initialization will only run if SDKMAN is installed
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-# Conda
+# Conda - Python/R package manager
+# NOTE: Not installed by setup.sh - install manually if needed
+# This initialization will only run if Conda is installed
 __conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
@@ -319,10 +323,11 @@ fi
 unset __conda_setup
 
 #############################################
-# Welcome Message
+# Welcome Message (Login Shells Only)
 #############################################
 
-if [ -t 0 ] && command -v python &> /dev/null; then
+# Only show on interactive login shells to avoid slowing down every subshell
+if [[ -o login ]] && [[ -o interactive ]] && command -v python &> /dev/null; then
     echo ""
     echo "🐍 Python: $(python --version 2>&1 | cut -d' ' -f2) | 📍 $(pwd | sed "s|$HOME|~|")"
     echo ""

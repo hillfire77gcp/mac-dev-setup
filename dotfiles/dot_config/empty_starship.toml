@@ -58,7 +58,6 @@ use_os_path_sep = true
 "dev" = " dev"
 "projects" = " projects"
 ".config" = " .config"
-"mac-dev-setup" = " mac-dev-setup"
 
 # Git Branch
 [git_branch]

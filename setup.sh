@@ -172,6 +172,28 @@ component_menu() {
 
     read -p "Selection: " selection
 
+    # Validate input
+    if [ -z "$selection" ]; then
+        log_error "No selection provided. Please enter numbers or 'all'"
+        exit 1
+    fi
+
+    if [ "$selection" != "all" ]; then
+        # Check that input contains only numbers and spaces
+        if ! [[ "$selection" =~ ^[0-9\ ]+$ ]]; then
+            log_error "Invalid input. Please enter only numbers (1-10) separated by spaces, or 'all'"
+            exit 1
+        fi
+
+        # Validate that all numbers are in range 1-10
+        for num in $selection; do
+            if [ "$num" -lt 1 ] || [ "$num" -gt 10 ]; then
+                log_error "Invalid selection: $num. Please enter numbers between 1 and 10"
+                exit 1
+            fi
+        done
+    fi
+
     # Convert selection to array
     if [ "$selection" = "all" ]; then
         INSTALL_HOMEBREW=1

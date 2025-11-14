@@ -5,6 +5,16 @@ set -euo pipefail
 
 log_header "🍎 Configuring macOS System Preferences"
 
+# Detect macOS version
+MACOS_VERSION=$(sw_vers -productVersion | cut -d. -f1)
+log_info "Detected macOS version: $(sw_vers -productVersion)"
+
+if [ "$MACOS_VERSION" -lt 13 ]; then
+    log_warning "This script is optimized for macOS 13 (Ventura) or later."
+    log_warning "Some settings may not apply to macOS $MACOS_VERSION."
+    echo ""
+fi
+
 echo "This will configure some sensible macOS defaults for developers."
 echo ""
 echo -e "${YELLOW}Changes include:${NC}"
