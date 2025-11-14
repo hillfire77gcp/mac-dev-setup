@@ -181,7 +181,8 @@ mac-dev-setup/
 │   │   ├── settings.json           # VS Code settings
 │   │   └── extensions.txt          # Extension list
 │   └── continue/
-│       └── config.json             # AI chat config
+│       ├── config.yaml             # AI chat config
+│       └── config.ts               # TypeScript config extension
 ├── templates/            # Project templates
 │   └── cli-template/     # Python CLI project template
 ├── docs/                 # Documentation

@@ -304,7 +304,7 @@ Quick reference for where things live:
 ~/.config/mise/config.toml      # Python version manager
 ~/.gitconfig                    # Git user config
 ~/.gitignore_global             # Global git ignores
-~/.continue/config.json         # AI chat configuration
+~/.continue/config.yaml         # AI chat configuration
 ~/Library/Application Support/Code/User/settings.json  # VS Code settings
 ```
 

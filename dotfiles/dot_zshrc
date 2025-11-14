@@ -14,8 +14,12 @@ compinit
 # Path Configuration
 #############################################
 
-# Homebrew
-export PATH="/opt/homebrew/bin:$PATH"
+# Homebrew - support both Apple Silicon and Intel Macs
+if [[ -f /opt/homebrew/bin/brew ]]; then
+    export PATH="/opt/homebrew/bin:$PATH"
+elif [[ -f /usr/local/bin/brew ]]; then
+    export PATH="/usr/local/bin:$PATH"
+fi
 
 # Local bin
 export PATH="$HOME/.local/bin:$PATH"
@@ -23,16 +27,28 @@ export PATH="$HOME/.local/bin:$PATH"
 # VS Code
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
-# Java/Scala paths
-export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
-export CPPFLAGS="-I/opt/homebrew/opt/openjdk@11/include"
-export PATH="/opt/homebrew/opt/scala@2.13/bin:$PATH"
+# Java/Scala paths (conditional - only if installed)
+if [[ -d "/opt/homebrew/opt/openjdk@11/bin" ]]; then
+    export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
+    export CPPFLAGS="-I/opt/homebrew/opt/openjdk@11/include"
+elif [[ -d "/usr/local/opt/openjdk@11/bin" ]]; then
+    export PATH="/usr/local/opt/openjdk@11/bin:$PATH"
+    export CPPFLAGS="-I/usr/local/opt/openjdk@11/include"
+fi
 
-# Spark
-export SPARK_HOME="$(brew --prefix apache-spark)/libexec"
-export PATH="$SPARK_HOME/bin:$PATH"
-export HADOOP_CONF_DIR=$SPARK_HOME/conf
-export DERBY_HOME=/opt/homebrew/opt/apache-spark/libexec/db-derby-10.14.2.0-lib
+if [[ -d "/opt/homebrew/opt/scala@2.13/bin" ]]; then
+    export PATH="/opt/homebrew/opt/scala@2.13/bin:$PATH"
+elif [[ -d "/usr/local/opt/scala@2.13/bin" ]]; then
+    export PATH="/usr/local/opt/scala@2.13/bin:$PATH"
+fi
+
+# Spark (conditional - only if installed)
+if command -v brew &> /dev/null && brew list apache-spark &> /dev/null 2>&1; then
+    export SPARK_HOME="$(brew --prefix apache-spark)/libexec"
+    export PATH="$SPARK_HOME/bin:$PATH"
+    export HADOOP_CONF_DIR=$SPARK_HOME/conf
+    export DERBY_HOME=$SPARK_HOME/db-derby-10.14.2.0-lib
+fi
 
 #############################################
 # Tool Initialization
@@ -274,12 +290,10 @@ ai() {
 }
 
 #############################################
-# Completion
+# Completion Style
 #############################################
 
-autoload -Uz compinit
-compinit
-
+# Note: compinit is already initialized at the top of this file
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 

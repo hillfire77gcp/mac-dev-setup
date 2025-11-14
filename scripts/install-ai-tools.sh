@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 # Install AI Coding Tools (Ollama + DeepSeek Coder)
 
@@ -35,8 +36,8 @@ else
 fi
 
 # Configure Continue extension
-CONTINUE_CONFIG_SRC="$SCRIPT_DIR/dotfiles/continue/config.json"
-CONTINUE_CONFIG_DST="$HOME/.continue/config.json"
+CONTINUE_CONFIG_SRC="$SCRIPT_DIR/dotfiles/continue/config.yaml"
+CONTINUE_CONFIG_DST="$HOME/.continue/config.yaml"
 
 if [ -f "$CONTINUE_CONFIG_SRC" ]; then
     log_info "Applying Continue AI configuration..."

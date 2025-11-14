@@ -265,7 +265,7 @@ ollama run deepseek-coder:6.7b  # Test the model
 | starship.toml | Prompt configuration | ~/.config/starship.toml |
 | config.toml | mise configuration | ~/.config/mise/config.toml |
 | settings.json | VS Code settings | ~/Library/Application Support/Code/User/ |
-| config.json | Continue AI config | ~/.continue/config.json |
+| config.yaml | Continue AI config | ~/.continue/config.yaml |
 
 **Features in .zshrc:**
 - Modern tool initialization

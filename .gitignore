@@ -5,6 +5,8 @@ backups/
 .DS_Store
 .AppleDouble
 .LSOverride
+*.icloud
+Thumbs.db
 
 # Temporary files
 *.swp
@@ -14,7 +16,10 @@ backups/
 
 # IDE files
 .vscode/
+.vscode-test/
+*.code-workspace
 .idea/
+*.sublime-*
 
 # Python cache
 __pycache__/
@@ -34,6 +39,8 @@ ENV/
 
 # Logs
 *.log
+*.log.*
+logs/
 
 # User-specific git config (if it contains personal info)
 # Uncomment if you add sensitive data
@@ -43,3 +50,14 @@ ENV/
 dotfiles/continue/index/
 dotfiles/continue/sessions/
 dotfiles/continue/dev_data/
+
+# Node.js (for Continue extension)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Test and coverage artifacts
+.tox/
+.coverage
+.coverage.*
+htmlcov/
