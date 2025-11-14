@@ -47,7 +47,9 @@ backup_file() {
     local file=$1
     if [ -f "$file" ] || [ -d "$file" ]; then
         mkdir -p "$BACKUP_DIR"
-        local backup_path="$BACKUP_DIR/$(basename "$file")"
+        local filename=$(basename "$file")
+        local timestamp=$(date +%H%M%S)
+        local backup_path="$BACKUP_DIR/${filename}_${timestamp}"
         cp -r "$file" "$backup_path"
         log_success "Backed up: $file → $backup_path"
     fi

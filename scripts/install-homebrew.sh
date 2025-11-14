@@ -18,6 +18,12 @@ else
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
 
+    # Verify installation succeeded
+    if ! command_exists brew; then
+        log_error "Homebrew installation failed. Please install manually from https://brew.sh"
+        exit 1
+    fi
+
     log_success "Homebrew installed successfully"
 fi
 

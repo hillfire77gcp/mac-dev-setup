@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "🔍 Testing Repository Portability"
 echo "=================================="
