@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 # Install Homebrew Package Manager
 
@@ -15,6 +16,12 @@ else
     if [[ $(uname -m) == 'arm64' ]]; then
         echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
         eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
+
+    # Verify installation succeeded
+    if ! command_exists brew; then
+        log_error "Homebrew installation failed. Please install manually from https://brew.sh"
+        exit 1
     fi
 
     log_success "Homebrew installed successfully"

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 # Install VS Code and Extensions
 
@@ -19,7 +20,17 @@ else
 fi
 
 # Wait for code command to be available
-sleep 2
+log_info "Waiting for code command to be available..."
+for i in {1..10}; do
+    if command -v code &> /dev/null; then
+        break
+    fi
+    sleep 1
+done
+
+if ! command -v code &> /dev/null; then
+    log_warning "code command not available after installation. You may need to restart your terminal."
+fi
 
 # Install extensions
 EXTENSIONS_FILE="$SCRIPT_DIR/dotfiles/vscode/extensions.txt"
@@ -28,6 +39,12 @@ if [ -f "$EXTENSIONS_FILE" ]; then
     log_info "Installing VS Code extensions..."
 
     while IFS= read -r extension; do
+        # Skip empty lines and comments
+        [[ -z "$extension" || "$extension" =~ ^[[:space:]]*$ || "$extension" =~ ^# ]] && continue
+
+        # Trim whitespace
+        extension=$(echo "$extension" | xargs)
+
         if code --list-extensions | grep -q "^$extension$"; then
             log_success "$extension already installed"
         else

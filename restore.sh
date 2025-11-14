@@ -48,13 +48,19 @@ show_backups() {
     echo ""
     read -p "$(echo -e "${CYAN}?${NC} Select backup to restore (1-$((index-1))) or 0 to cancel: ")" choice
 
-    if [ "$choice" -eq 0 ] 2>/dev/null; then
+    # Validate input is a number
+    if ! [[ "$choice" =~ ^[0-9]+$ ]]; then
+        log_error "Invalid input. Please enter a number between 0 and $((index-1))"
+        exit 1
+    fi
+
+    if [ "$choice" -eq 0 ]; then
         log_info "Restore cancelled"
         exit 0
     fi
 
-    if [ "$choice" -lt 1 ] || [ "$choice" -ge "$index" ] 2>/dev/null; then
-        log_error "Invalid selection"
+    if [ "$choice" -lt 1 ] || [ "$choice" -ge "$index" ]; then
+        log_error "Invalid selection. Please enter a number between 1 and $((index-1))"
         exit 1
     fi
 
@@ -100,10 +106,22 @@ restore_file() {
         starship.toml) dst="$HOME/.config/starship.toml" ;;
         config.toml) dst="$HOME/.config/mise/config.toml" ;;
         settings.json) dst="$HOME/Library/Application Support/Code/User/settings.json" ;;
-        config.json) dst="$HOME/.continue/config.json" ;;
+        config.yaml) dst="$HOME/.continue/config.yaml" ;;
+        config.json) dst="$HOME/.continue/config.yaml" ;;  # Legacy support
         *)
             log_warning "Unknown file type: $filename"
             read -p "Enter destination path: " dst
+
+            # Validate path is not empty and starts with / or ~
+            if [ -z "$dst" ]; then
+                log_error "No destination specified"
+                return 1
+            fi
+
+            if [[ ! "$dst" =~ ^[/~] ]]; then
+                log_error "Destination path must be absolute (start with / or ~)"
+                return 1
+            fi
             ;;
     esac
 
@@ -136,6 +154,12 @@ main() {
     show_backup_files
 
     read -p "Selection: " selection
+
+    # Validate input
+    if [ -z "$selection" ]; then
+        log_error "No selection provided"
+        exit 1
+    fi
 
     if [ "$selection" = "0" ]; then
         log_info "Restore cancelled"

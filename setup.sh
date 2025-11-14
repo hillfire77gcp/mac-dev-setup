@@ -47,7 +47,9 @@ backup_file() {
     local file=$1
     if [ -f "$file" ] || [ -d "$file" ]; then
         mkdir -p "$BACKUP_DIR"
-        local backup_path="$BACKUP_DIR/$(basename "$file")"
+        local filename=$(basename "$file")
+        local timestamp=$(date +%H%M%S)
+        local backup_path="$BACKUP_DIR/${filename}_${timestamp}"
         cp -r "$file" "$backup_path"
         log_success "Backed up: $file → $backup_path"
     fi
@@ -171,6 +173,28 @@ component_menu() {
     echo ""
 
     read -p "Selection: " selection
+
+    # Validate input
+    if [ -z "$selection" ]; then
+        log_error "No selection provided. Please enter numbers or 'all'"
+        exit 1
+    fi
+
+    if [ "$selection" != "all" ]; then
+        # Check that input contains only numbers and spaces
+        if ! [[ "$selection" =~ ^[0-9\ ]+$ ]]; then
+            log_error "Invalid input. Please enter only numbers (1-10) separated by spaces, or 'all'"
+            exit 1
+        fi
+
+        # Validate that all numbers are in range 1-10
+        for num in $selection; do
+            if [ "$num" -lt 1 ] || [ "$num" -gt 10 ]; then
+                log_error "Invalid selection: $num. Please enter numbers between 1 and 10"
+                exit 1
+            fi
+        done
+    fi
 
     # Convert selection to array
     if [ "$selection" = "all" ]; then

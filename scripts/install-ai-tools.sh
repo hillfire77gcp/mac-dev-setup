@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 # Install AI Coding Tools (Ollama + DeepSeek Coder)
 
@@ -21,7 +22,21 @@ fi
 # Start Ollama service
 log_info "Starting Ollama service..."
 brew services start ollama
-sleep 3  # Wait for service to start
+
+# Wait for service to be ready (up to 15 seconds)
+log_info "Waiting for Ollama service to be ready..."
+for i in {1..15}; do
+    if ollama list &> /dev/null; then
+        log_success "Ollama service is ready"
+        break
+    fi
+    sleep 1
+done
+
+# Final check
+if ! ollama list &> /dev/null; then
+    log_warning "Ollama service may not be ready. Continuing anyway..."
+fi
 
 # Download DeepSeek Coder model
 log_info "Downloading DeepSeek Coder model (~3.8 GB)..."
@@ -35,8 +50,8 @@ else
 fi
 
 # Configure Continue extension
-CONTINUE_CONFIG_SRC="$SCRIPT_DIR/dotfiles/continue/config.json"
-CONTINUE_CONFIG_DST="$HOME/.continue/config.json"
+CONTINUE_CONFIG_SRC="$SCRIPT_DIR/dotfiles/continue/config.yaml"
+CONTINUE_CONFIG_DST="$HOME/.continue/config.yaml"
 
 if [ -f "$CONTINUE_CONFIG_SRC" ]; then
     log_info "Applying Continue AI configuration..."

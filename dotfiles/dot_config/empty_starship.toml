@@ -5,7 +5,7 @@ command_timeout = 1000
 
 # Format
 format = """
-[ ](#9A348E)\
+$os\
 $username\
 $hostname\
 $directory\
@@ -17,7 +17,17 @@ $rust\
 $golang\
 $docker_context\
 $line_break\
-[ >](#9A348E) """
+$character"""
+
+# OS - Shows Apple logo on macOS
+[os]
+disabled = false
+format = "[$symbol ]($style)"
+
+[os.symbols]
+Macos = ""
+Linux = ""
+Windows = ""
 
 # Username
 [username]
@@ -27,12 +37,27 @@ format = "[$user]($style) "
 disabled = false
 show_always = true
 
-# Directory
+# Directory - with folder icons
 [directory]
 truncation_length = 3
 truncation_symbol = ".../"
 style = "bold #2ecc71"
-format = "at [$path]($style)[$read_only]($read_only_style) "
+format = "in [$path]($style)[$read_only]($read_only_style) "
+read_only = " 󰌾"
+home_symbol = "󰋜 ~"
+use_os_path_sep = true
+
+# Special directory icons
+[directory.substitutions]
+"Documents" = "󰈙 Documents"
+"Downloads" = " Downloads"
+"Music" = "󰝚 Music"
+"Pictures" = " Pictures"
+"Videos" = " Videos"
+"Desktop" = "󰚝 Desktop"
+"dev" = " dev"
+"projects" = " projects"
+".config" = " .config"
 
 # Git Branch
 [git_branch]
